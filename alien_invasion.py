@@ -1,5 +1,7 @@
+import json
 import sys
 from time import sleep
+from pathlib import Path
 import pygame
 
 from settings import Settings
@@ -31,7 +33,6 @@ class AlienInvasion:
         self._create_fleet()
         self.play_button = Button(self, "Play")
         self._create_difficulty_buttons()
-        self.game_active = False
 
 
     def run_game(self):
@@ -109,7 +110,7 @@ class AlienInvasion:
         """キーボードとマウスのイベントを判定"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                self._close_game()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 self._check_play_button(mouse_pos)
@@ -118,6 +119,16 @@ class AlienInvasion:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
+
+
+    def _close_game(self):
+        """ハイスコアを保存して終了"""
+        saved_high_score = self.stats.get_saved_high_score()
+        if self.stats.high_score > saved_high_score:
+            path = Path('high_score.json')
+            contents = json.dumps(self.stats.high_score)
+            path.write_text(contents)
+        sys.exit()
 
 
     def _check_play_button(self, mouse_pos):
@@ -167,10 +178,10 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
-            sys.exit()
-        elif event.key == pygame.K_SPACE:
+            self._close_game()
+        elif event.key == pygame.K_SPACE and self.stats.game_active:
             self._fire_bullet()
-        elif event.key == pygame.K_p and not self.game_active:
+        elif event.key == pygame.K_p and not self.stats.game_active:
             self._start_game()
 
 
