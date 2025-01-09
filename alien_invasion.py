@@ -224,11 +224,16 @@ class AlienInvasion:
             self.sb.check_high_score()
         # エイリアン艦隊を撃破するたびに弾を廃棄後、新しいエイリアン艦隊を生成
         if not self.aliens:
-            self.bullets.empty()
-            self._create_fleet()
-            self.settings.increase_speed()
-            self.stats.level += 1
-            self.sb.prep_level()
+            self._start_new_level()
+
+
+    def _start_new_level(self):
+        """エイリアン艦隊を撃破後、新しいレベルを開始"""
+        self.bullets.empty()
+        self._create_fleet()
+        self.settings.increase_speed()
+        self.stats.level += 1
+        self.sb.prep_level()
 
 
     def _update_aliens(self):
