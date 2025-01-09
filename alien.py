@@ -15,6 +15,7 @@ class Alien(Sprite):
         self.rect.x = self.rect.width
         self.rect.y = self.rect.height
         self.x = float(self.rect.x)
+        self.alien_limit = 0
 
 
     def check_edges(self):

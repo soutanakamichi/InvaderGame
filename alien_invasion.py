@@ -3,6 +3,8 @@ import sys
 from time import sleep
 from pathlib import Path
 import pygame
+import random
+import itertools
 
 from settings import Settings
 from game_stats import GameStats
@@ -12,6 +14,7 @@ from difficulty_button import DifficultyButton
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from alien_red import AlienRed
 
 
 class AlienInvasion:
@@ -73,7 +76,16 @@ class AlienInvasion:
 
     def _create_alien(self, alien_number, row_number):
         """エイリアンを生成後、エイリアン艦隊の中に配置"""
-        alien = Alien(self)
+        # 難易度によってエイリアンの種類を設定
+        random_number = 0
+        if self.settings.difficulty_level == "medium":
+            random_number = random.randint(1, 20)
+        elif self.settings.difficulty_level == "difficult":
+            random_number = random.randint(1, 10)
+        if random_number == 1:
+            alien = AlienRed(self)
+        else:
+            alien = Alien(self)
         alien_width, alien_height = alien.rect.size
 
         # エイリアン同士の並びから一体分の余白を空けるための 2 * alien_width
@@ -198,8 +210,6 @@ class AlienInvasion:
         if len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
-        # 弾の発射後に衝突判定
-        self._check_bullet_alien_collisions()
 
 
     def _update_bullets(self):
@@ -215,11 +225,17 @@ class AlienInvasion:
     def _check_bullet_alien_collisions(self):
         """弾とエイリアンの衝突を判定"""
         # 引数をFalseにすれば、二回以上の衝突で消えるエイリアン、貫通弾にパワーアップするアイテムなど実装可能
-        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, False)
         # 衝突時の追加処理
         if collisions:
-            for aliens in collisions.values():
-                self.stats.score += self.settings.alien_points * len(aliens)
+            # set()によって重複を排除、itertools.chainによって複数のリストを1つに連結
+            aliens_hit = set(itertools.chain(*collisions.values()))
+            self.stats.score += self.settings.alien_points * len(aliens_hit)
+            for alien in aliens_hit:
+                if alien.alien_limit == 0:
+                    self.aliens.remove(alien)
+                else:
+                    alien.alien_limit -= 1
             self.sb.prep_score()
             self.sb.check_high_score()
         # エイリアン艦隊を撃破するたびに弾を廃棄後、新しいエイリアン艦隊を生成
