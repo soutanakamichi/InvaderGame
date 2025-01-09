@@ -17,6 +17,7 @@ class Ship(Sprite):
         self.x = float(self.rect.x)
         self.moving_right = False
         self.moving_left = False
+        self.fire_bullet = False
 
 
     def update(self):

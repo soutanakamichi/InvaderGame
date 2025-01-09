@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import pygame
 
 
 class GameStats:
@@ -16,6 +17,7 @@ class GameStats:
         self.ships_left = self.settings.ship_limit
         self.score = 0
         self.level = 1
+        self.last_bullet_time = pygame.time.get_ticks()
 
 
     def get_saved_high_score(self):

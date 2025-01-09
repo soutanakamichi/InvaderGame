@@ -44,6 +44,7 @@ class AlienInvasion:
             self._check_events()
             if self.stats.game_active:
                 self.ship.update()
+                self._fire_bullet()
                 self._update_bullets()
                 self._update_aliens()
             self._update_screen()
@@ -192,7 +193,7 @@ class AlienInvasion:
         elif event.key == pygame.K_q:
             self._close_game()
         elif event.key == pygame.K_SPACE and self.stats.game_active:
-            self._fire_bullet()
+            self.ship.fire_bullet = True
         elif event.key == pygame.K_p and not self.stats.game_active:
             self._start_game()
 
@@ -203,13 +204,17 @@ class AlienInvasion:
             self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
+        elif event.key == pygame.K_SPACE:
+            self.ship.fire_bullet = False
 
 
     def _fire_bullet(self):
         """新しい弾を生成後、bulletsグループに追加"""
-        if len(self.bullets) < self.settings.bullets_allowed:
+        current_time = pygame.time.get_ticks()
+        if self.ship.fire_bullet and current_time - self.stats.last_bullet_time >= self.settings.bullets_interval and len(self.bullets) < self.settings.bullets_allowed:
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
+            self.stats.last_bullet_time = current_time
 
 
     def _update_bullets(self):
