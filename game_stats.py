@@ -14,7 +14,7 @@ class GameStats:
 
     def reset_stats(self):
         """ゲーム中に変更される統計情報を初期化"""
-        self.ships_left = self.settings.ship_limit
+        self.ship_limits = self.settings.ship_limit
         self.score = 0
         self.level = 1
         self.last_bullet_time = pygame.time.get_ticks()

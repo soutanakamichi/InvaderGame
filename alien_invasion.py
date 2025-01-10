@@ -15,6 +15,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from alien_red import AlienRed
+from bell import Bell
 
 
 class AlienInvasion:
@@ -27,13 +28,14 @@ class AlienInvasion:
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
-        pygame.display.set_caption("エイリアン侵略")
+        pygame.display.set_caption("インベーダーゲーム")
         self.stats = GameStats(self)
         self.sb = Scoreboard(self)
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self._create_fleet()
+        self.bell =Bell(self)
         self.play_button = Button(self, "Play")
         self._create_difficulty_buttons()
 
@@ -47,6 +49,7 @@ class AlienInvasion:
                 self._fire_bullet()
                 self._update_bullets()
                 self._update_aliens()
+                self._update_bell()
             self._update_screen()
             self.clock.tick(60)
 
@@ -164,6 +167,7 @@ class AlienInvasion:
         self.bullets.empty()
         self._create_fleet()
         self.ship.center_ship()
+        self.bell.initialize_bell()
         pygame.mouse.set_visible(False)
 
 
@@ -267,7 +271,7 @@ class AlienInvasion:
 
 
     def _check_fleet_edges(self):
-        """エイリアンの画面端の処理"""
+        """エイリアンの画面端処理"""
         for alien in self.aliens.sprites():
             if alien.check_edges():
                 self._change_fleet_direction()
@@ -291,18 +295,41 @@ class AlienInvasion:
 
 
     def _ship_hit(self):
-        """エイリアンと自機の衝突を判定"""
-        if self.stats.ships_left > 0:
-            self.stats.ships_left -= 1
+        """エイリアンと自機の衝突処理"""
+        if self.stats.ship_limits > 0:
+            self.stats.ship_limits -= 1
             self.sb.prep_ships()
             self.aliens.empty()
             self.bullets.empty()
             self._create_fleet()
             self.ship.center_ship()
+            self.bell.initialize_bell()
             sleep(0.5)
         else:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
+
+
+    def _update_bell(self):
+        """ベルの位置を更新"""
+        self.bell.update()
+        self._check_bell_bottom()
+        if pygame.sprite.collide_rect(self.ship, self.bell):
+            self._bell_hit()
+
+
+    def _check_bell_bottom(self):
+        """ベルと画面下の衝突を判定"""
+        screen_rect = self.screen.get_rect()
+        if self.bell.rect.bottom >= screen_rect.bottom + self.bell.rect.height:
+            self.bell.random_bell()
+
+
+    def _bell_hit(self):
+        """ベルと自機の衝突処理"""
+        self.stats.score += self.settings.bell_points
+        self.sb.prep_score()
+        self.bell.initialize_bell()
 
 
     def _update_screen(self):
@@ -312,6 +339,7 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
+        self.bell.blitme()        
         self.sb.show_score()
 
         # ゲームが非アクティブ状態のときにボタンを描画

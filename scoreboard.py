@@ -66,7 +66,7 @@ class Scoreboard:
     def prep_ships(self):
         """自機の残数を表示"""
         self.ships = Group()
-        for ship_number in range(self.stats.ships_left):
+        for ship_number in range(self.stats.ship_limits):
             ship = Ship(self.ai_game)
             ship.image = pygame.transform.scale(ship.image, (ship.image.get_width() // 2, ship.image.get_height() // 2))
             ship.rect = ship.image.get_rect()

@@ -14,9 +14,9 @@ class DifficultyButton(Button):
 
         # 難易度によってボタンを設定
         if self.difficulty == "Easy":
-            self.button_color = (0, 255, 0)
+            self.button_color = (0, 200, 0)
         elif self.difficulty == "Medium":
-            self.button_color = (255, 255, 0)
+            self.button_color = (255, 200, 0)
         elif self.difficulty == "Difficult":
             self.button_color = (255, 0, 0)
         self._prep_msg(msg)

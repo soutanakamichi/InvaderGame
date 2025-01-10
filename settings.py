@@ -19,6 +19,10 @@ class Settings:
         # エイリアン艦隊の設定
         self.fleet_drop_speed = 10
 
+        # ベルの設定
+        self.bell_drop_speed = 5
+        self.bell_points = 200
+
         # スピードアップの設定
         self.speedup_scale = 1.1
         self.score_scale = 1.5
