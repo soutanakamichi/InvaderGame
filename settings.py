@@ -20,8 +20,8 @@ class Settings:
         self.fleet_drop_speed = 10
 
         # ベルの設定
-        self.bell_drop_speed = 5
-        self.bell_points = 200
+        self.bell_drop_speed = 4
+        self.bell_points = 50
 
         # スピードアップの設定
         self.speedup_scale = 1.1

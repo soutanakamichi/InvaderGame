@@ -262,7 +262,7 @@ class AlienInvasion:
 
 
     def _update_aliens(self):
-        """エイリアン艦隊と画面端の衝突を判定後、エイリアンの位置を更新"""
+        """エイリアン艦隊と画面端の衝突を判定後、エイリアン艦隊と自機の衝突を判定"""
         self._check_fleet_edges()
         self.aliens.update()
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
@@ -313,9 +313,17 @@ class AlienInvasion:
     def _update_bell(self):
         """ベルの位置を更新"""
         self.bell.update()
+        self._check_bell_bullet_collisions()
         self._check_bell_bottom()
         if pygame.sprite.collide_rect(self.ship, self.bell):
             self._bell_hit()
+
+
+    def _check_bell_bullet_collisions(self):
+        """ベルと弾の衝突を判定"""
+        collisions = pygame.sprite.spritecollide(self.bell, self.bullets, True)
+        for bullet in collisions:
+            self.bell.bell_count += 1
 
 
     def _check_bell_bottom(self):

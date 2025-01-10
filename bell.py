@@ -29,6 +29,7 @@ class Bell(Sprite):
         """ベルをランダムに配置"""
         current_time = pygame.time.get_ticks()
         self.bell_interval = random.randint(10000, 20000)
+        self.bell_count = 0
         if current_time - self.last_bell_time >= self.bell_interval:
             self.last_bell_time = pygame.time.get_ticks()
             self.rect.x = random.randint(0, self.settings.screen_width - self.rect.width)
@@ -42,8 +43,25 @@ class Bell(Sprite):
     def update(self):
         """ベルを下に移動"""
         if self.bell_active:
+            self.change_bell_color()
             self.y += self.settings.bell_drop_speed
             self.rect.y = self.y
+
+
+    def change_bell_color(self):
+        """ベルの色を更新"""
+        if self.bell_count == 5:
+            self.image = pygame.image.load('images/bell_red.bmp')
+            self.settings.bell_points = 200
+        elif self.bell_count >= 4:
+            self.image = pygame.image.load('images/bell_gold.bmp')
+            self.settings.bell_points = 150
+        elif self.bell_count >= 2:
+            self.image = pygame.image.load('images/bell_silver.bmp')
+            self.settings.bell_points = 100
+        else:
+            self.image = pygame.image.load('images/bell.bmp')
+            self.settings.bell_points = 50
 
 
     def blitme(self):
