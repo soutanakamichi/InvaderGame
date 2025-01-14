@@ -308,6 +308,50 @@ class AlienInvasion:
         else:
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
+            self.input_name()
+
+
+    def input_name(self):
+        """名前入力画面を描画"""
+        input_active = True
+        input_text = ""
+        max_name_length = 15
+        while input_active:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self._close_game()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if not input_text.strip():
+                            self.show_error_message("Please input name!")
+                        elif len(input_text) > max_name_length:
+                            self.show_error_message(f"{max_name_length} characters max!")
+                        else:
+                            self.stats.player_name = input_text
+                            input_active = False
+                    elif event.key == pygame.K_BACKSPACE:
+                        input_text = input_text[:-1]
+                    else:
+                        input_text += event.unicode
+            self.screen.fill(self.settings.bg_color)
+            self.sb.show_score()
+            text_surface = self.sb.scores_font.render(f"Enter your name:", True, self.sb.scores_color)
+            input_text_surface = self.sb.scores_font.render(f"{input_text}", True, self.sb.scores_color)
+            input_text_width = input_text_surface.get_width()
+            self.screen.blit(text_surface, (150, 200))
+            self.screen.blit(input_text_surface, (150, 280))
+            pygame.display.update()
+            self.clock.tick(60)
+        self.sb.check_high_score()
+        self.stats.save_scores()
+
+
+    def show_error_message(self, message):
+        """エラーメッセージを描画"""
+        error_text = self.sb.scores_font.render(message, True, (255, 0, 0))
+        self.screen.blit(error_text, (150, 120))
+        pygame.display.update()
+        pygame.time.wait(1000)
 
 
     def _update_bell(self):
@@ -347,7 +391,7 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         self.aliens.draw(self.screen)
-        self.bell.blitme()        
+        self.bell.blitme()
         self.sb.show_score()
 
         # ゲームが非アクティブ状態のときにボタンを描画
