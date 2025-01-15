@@ -315,7 +315,7 @@ class AlienInvasion:
         """名前入力画面を描画"""
         input_active = True
         input_text = ""
-        max_name_length = 15
+        max_name_length = 8
         while input_active:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -338,20 +338,42 @@ class AlienInvasion:
             text_surface = self.sb.scores_font.render(f"Enter your name:", True, self.sb.scores_color)
             input_text_surface = self.sb.scores_font.render(f"{input_text}", True, self.sb.scores_color)
             input_text_width = input_text_surface.get_width()
-            self.screen.blit(text_surface, (150, 200))
-            self.screen.blit(input_text_surface, (150, 280))
+            self.screen.blit(text_surface, (140, 200))
+            self.screen.blit(input_text_surface, (140, 280))
             pygame.display.update()
             self.clock.tick(60)
         self.sb.check_high_score()
         self.stats.save_scores()
+        self.screen.fill(self.settings.bg_color)
+        self.display_top_scores()
 
 
     def show_error_message(self, message):
         """エラーメッセージを描画"""
         error_text = self.sb.scores_font.render(message, True, (255, 0, 0))
-        self.screen.blit(error_text, (150, 120))
+        self.screen.blit(error_text, (120, 120))
         pygame.display.update()
         pygame.time.wait(1000)
+
+
+    def display_top_scores(self):
+        """上位5位のプレイヤー名とスコアを表示"""
+        path = 'scores.json'
+        if Path(path).exists():
+            with open(path, 'r') as file:
+                scores = json.load(file)
+            y_offset = 20
+            top_scores = scores[:5]
+            text_surface = self.sb.scores_font.render(f"Top 5 Scores!", True, self.sb.scores_color)
+            self.screen.blit(text_surface, (180, y_offset))
+            for i, score_entry in enumerate(top_scores):
+                y_offset += 80
+                player_name = score_entry['player_name']
+                score = score_entry['score']
+                text_surface = self.sb.scores_font.render(f"{i+1}. {player_name}: {score}", True, self.sb.scores_color)
+                self.screen.blit(text_surface, (50, y_offset))
+            pygame.display.update()
+            pygame.time.wait(5000)
 
 
     def _update_bell(self):
