@@ -1,4 +1,5 @@
 # インベーダーゲーム ver.1.0　<img src="https://img.shields.io/badge/Python-yellow?logo=python&logoColor=blue">
+![インベーダーデモ3](https://github.com/user-attachments/assets/9ffda8d4-48ab-4f9b-8a07-168a1bb8eced)
 ![インベーダーデモ](https://github.com/user-attachments/assets/d05e8ad1-e127-4680-8d94-6d578ad809b0)
 ![インベーダーデモ2](https://github.com/user-attachments/assets/de36b5d6-1e4b-47f0-b657-49e004f859d2)<br>
 かつてのアーケードゲームを彷彿とさせる、古き良きシューティングゲームです。<br>
